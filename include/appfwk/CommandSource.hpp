@@ -8,7 +8,8 @@
 #define DUNEDAQ_APPFWK_COMMANDSOURCE_HPP
 
 #include <nlohmann/json.hpp>
-
+#include <string>
+#include <memory>
 
 namespace dunedaq::appfwk {
 
@@ -27,7 +28,7 @@ namespace dunedaq::appfwk {
         using object_t = nlohmann::json;
 
         /// Subclass must override to get a source URI.
-        CommandSource(std::string uri) {}
+        CommandSource(std::string /*uri*/) {}
         virtual ~CommandSource() {};
 
         /// Recieve the next command object.  Call may block indefinitely.
@@ -37,20 +38,10 @@ namespace dunedaq::appfwk {
         virtual void send(object_t /*reply*/) { }
     };
 
-    /** @brief Load a CommandSource plugin and return an instance to
-     * source from the URI.
+    /** @brief Load a CommandSource plugin and return instance for URI.
      */
-    inline std::shared_ptr<CommandSource>
-    makeCommandSource(std::string const& plugin_name, std::string const& uri)
-    {
-        static cet::BasicPluginFactory bpf("duneCommandSource", "make");
-        return bpf.makePlugin<std::shared_ptr<CommandSource>>(plugin_name, uri);
-    }
+    std::shared_ptr<CommandSource> makeCommandSource(std::string const& uri);
 
-}
-
-#define DEFINE_DUNE_DAQ_COMMANDSOURCE(klass)\
-  extern "C" { std::shared_ptr<dunedaq::appfwk::CommandSource> make(std::string uri) \
-  { return std::shared_ptr<dunedaq::appfwk::CommandSource>(new klass(uri)); }}
+} // namespace dunedaq::appfwk
 
 #endif

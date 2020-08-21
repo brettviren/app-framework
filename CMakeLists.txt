@@ -18,7 +18,8 @@ set(APPFWK_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers Folly::folly nlohman
 ##############################################################################
 daq_point_build_to( src )
 
-add_library(appfwk SHARED src/QueueRegistry.cpp src/DAQProcess.cpp src/DAQModule.cpp src/Application.cpp)
+add_library(appfwk SHARED src/QueueRegistry.cpp src/DAQProcess.cpp src/DAQModule.cpp
+  src/Application.cpp src/CommandSource.cpp)
 target_link_libraries(appfwk ${APPFWK_DEPENDENCIES})
 target_include_directories(appfwk PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
 
@@ -38,6 +39,9 @@ endmacro()
 MakeDataTypeLibraries(CPPTYPE std::vector<int> PREFIX VectorInt)
 MakeDataTypeLibraries(CPPTYPE std::string PREFIX String)
 MakeDataTypeLibraries(CPPTYPE dunedaq::appfwk::NonCopyableType PREFIX NonCopyableType)
+
+add_library(appfwk_fileCommandSource_duneCommandSource src/FileCommandSource.cpp)
+target_link_libraries(appfwk_fileCommandSource_duneCommandSource appfwk)
 
 
 ##############################################################################

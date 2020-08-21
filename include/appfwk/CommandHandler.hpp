@@ -12,7 +12,8 @@ namespace dunedaq::appfwk {
 
         using object_t = nlohmann::json;
 
-        CommandHandler(std::string name) {}
+        // must implement to get naem
+        CommandHandler(std::string /*name*/) {}
         virtual ~CommandHandler() {}
         virtual object_t handle(object_t cmdobj) = 0;
     };

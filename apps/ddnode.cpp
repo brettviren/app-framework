@@ -2,44 +2,41 @@
  *
  * Usage:
  *
- *     ddnode <command-source> <URI>
+ *     ddnode <URI>
  *
  * This program provides a fully generic, command-driven application.
  *
- * Executing a process of this application is fully parameterized by
- * the named command source which produces a sequence of command
- * objects derived from the URI.  Subsequent behavior depends entirely
- * on the content of the produced commands.  Regardless of command
- * source selected, commands are interprted, and thus process behavior
- * determined, in a common way.
+ * The behavior of this process is fully parameterized by the URI and
+ * subsequent command information found at that location.  Independent
+ * on the command source or the format of data it provides, behavior
+ * is implemented in a common manner.
  *
  * This is part of the DUNE DAQ Application Framework, copyright 2020.
  * Licensing/copyright details are in the COPYING file that you should have
  * received with this code.
  */
 
-#include "ers/Issue.h"
 #include "appfwk/Application.hpp"
 #include "appfwk/CommandSource.hpp"
+#include "appfwk/Issues.hpp"
 
-namespace dunedaq {
-ERS_DECLARE_ISSUE(appfwk,          // namespace
-                  BadUsage, // issue class name
-                  "usage: ddnode <sourcetype> <uri>",) // message
-}
 int main(int argc, char* argv[])
 {
     using namespace dunedaq::appfwk;
 
-    if (argc != 3) {
-	throw BadUsage(ERS_HERE);
+    if (argc != 2) {
+        ERS_INFO("No URI provided.\n"
+                 << "usage:\n" << "\tddnode <URI>\n"
+                 << "Examples:\n"
+                 << "\tddnode somefile.jsonstream\n"
+                 << "\tddnode file://path/to/somefile.json\n");
+	throw BadCliUsage(ERS_HERE, "no URI provided");
     }
-    const std::string csname = argv[1];
-    const std::string csuri = argv[2];
+    const std::string uri = argv[1];
 
     AppFSM app("ddnode");
 
-    auto cs = makeCommandSource(csname, csuri);
+    auto cs = makeCommandSource(uri);
     while (true) {
         auto command = cs->recv();
         auto reply = app.handle(command);
