@@ -35,9 +35,10 @@ do_one () {
     local one="$1"; shift
     local dest="$1"; shift
     if [ ! -f $one ] ; then
+        echo "no such file: $one" 1>&1
         return
     fi
-    for tname in Nljs Structs
+    for tname in $@
     do
         lname=$(echo $tname | awk '{print tolower($0)}')
         local hppj2="${schemadir}/${lname}.hpp.j2"
@@ -48,5 +49,7 @@ do_one () {
     done
 }
 
-do_one Cmd "${schemadir}/cmd-codegen.jsonnet" "$incdir"
-do_one Test "${tstdir}/test-codegen.jsonnet" "$tstdir"
+do_one Cmd "${schemadir}/cmd-codegen.jsonnet" "$incdir" Nljs Structs
+do_one App "${schemadir}/app-codegen.jsonnet" "$incdir" Nljs Structs
+do_one App "${schemadir}/app-fsmgen.jsonnet" "$incdir" FSM
+do_one Test "${tstdir}/test-codegen.jsonnet" "$tstdir" Nljs Structs

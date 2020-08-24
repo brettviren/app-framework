@@ -1,7 +1,6 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
- */
-#ifndef DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
+ */#ifndef DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
 #define DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
 
 #include <string>

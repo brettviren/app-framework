@@ -5,7 +5,6 @@
 {% if ft is mapping %}std::vector<{{field_type(ft["items"])}}>{% elif ft == "string" %}std::string{% elif ft == "any"%}model.anytype{% else %}{{ ft }}{% endif %}
 {%- endmacro -%}
 {% set nsmarker = model.namespace.replace(":","_").replace(".","_").upper() +"_"+ model.name.upper() + "_STRUCTS_HPP" %}
-
 #ifndef {{nsmarker}}
 #define {{nsmarker}}
 

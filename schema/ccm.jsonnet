@@ -27,8 +27,10 @@ local multischema(ss) = function(schemalist) {
     // This collects all meta info about CCM commands intended for use
     // in other parts of the schema.
     commands: {
-        Names: ["Exec","Init","Conf","Start","Stop","Scrap","Fina","Term","Undef"],
+        Names: ["Undef","Exec","Init","Conf","Start","Stop","Scrap","Fina","Term"],
         names: [std.asciiLower(n) for n in self.Names],
+
+        name2id(name) :: std.find(name, self.names)[0],
     },
 
     // fixme: describe an fsm, add template to realize it.  Assume boost::msm.

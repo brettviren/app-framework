@@ -82,7 +82,9 @@ struct JsonStream : ObjectStream {
             throw StreamCorrupt(ERS_HERE, name, pe.what());
         }
         if (not obj.is_object()) {
-            throw StreamCorrupt(ERS_HERE, name, "not an object");
+            std::string msg = "want: object, got: ";
+            msg += obj.dump(4); // fixme: temp for debugging!
+            throw StreamCorrupt(ERS_HERE, name, msg);
         }
         return obj;
     }
@@ -97,18 +99,28 @@ struct JsonStream : ObjectStream {
 // a JSON Stream of arrays of objects.
 struct JsonArray : public ObjectStream {
     object_t arr;
-    virtual ~JsonArray() { this->flush(); }
-    JsonArray(std::string name, std::iostream& io) : ObjectStream(name, io) {
-        try {                   // slurp
+    bool isread;
+    virtual ~JsonArray() { if (!isread) { this->flush(); } }
+    JsonArray(std::string name, std::iostream& io, bool isread=true)
+        : ObjectStream(name, io)
+        , isread(isread) {
+        if (isread) slurp();
+    }
+
+    void slurp() {
+        try {
             r() >> arr;
         }
         catch (const object_t::parse_error& pe) {
             throw StreamCorrupt(ERS_HERE, name, pe.what());
         }
         if (not arr.is_array()) {
-            throw StreamCorrupt(ERS_HERE, name, "not an array");
+            std::string msg = "want: array, got: ";
+            msg += arr.dump(4); // fixme: temp for debugging!
+            throw StreamCorrupt(ERS_HERE, name, msg);
         }
     }
+
     virtual object_t get() {
         if (arr.empty()) {
             throw StreamExhausted(ERS_HERE, name, "array end");
@@ -116,7 +128,9 @@ struct JsonArray : public ObjectStream {
         auto obj = arr[0];
         arr.erase(0);
         if (not obj.is_object()) {
-            throw StreamCorrupt(ERS_HERE, name, "not an object");
+            std::string msg = "want: object, got: ";
+            msg += obj.dump(4); // fixme: temp for debugging!
+            throw StreamCorrupt(ERS_HERE, name, msg);
         }
         return obj;
     }
@@ -171,16 +185,20 @@ struct fileCommandSource : public CommandSource {
         }
         std::string bname = iname.substr(0, dot);
         std::string oname = iname + "-out." + ext;
+
+        ERS_INFO("open: scheme:" << scheme << " ext:" << ext);
+
+        
         if (scheme.empty() or scheme == "file") {
             istr.open(iname, std::ios_base::in);
             ostr.open(oname, std::ios_base::out);
             if (ext == "json") {
-                ios.reset(new JsonStream(iname, istr));
-                oos.reset(new JsonStream(oname, ostr));
+                ios.reset(new JsonArray(iname, istr, true));
+                oos.reset(new JsonArray(oname, ostr, false));
             }
             if (ext == "jstream") {
-                ios.reset(new JsonArray(iname, istr));
-                oos.reset(new JsonArray(oname, ostr));
+                ios.reset(new JsonStream(iname, istr));
+                oos.reset(new JsonStream(oname, ostr));
             }
             return;
         }

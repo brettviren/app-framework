@@ -23,6 +23,7 @@
 int main(int argc, char* argv[])
 {
     using namespace dunedaq::appfwk;
+    using object_t = CommandSource::object_t;
 
     if (argc != 2) {
         ERS_INFO("No URI provided.\n"
@@ -34,13 +35,22 @@ int main(int argc, char* argv[])
     }
     const std::string uri = argv[1];
 
-    AppFSM app("ddnode");
+    using BE = boost::msm::back::state_machine<Application>;
+    BE app;
 
     auto cs = makeCommandSource(uri);
     while (true) {
-        auto command = cs->recv();
-        auto reply = app.handle(command);
-        cs->send(reply);
+        object_t command;
+        try {
+            command = cs->recv();
+        }
+        catch (const StreamExhausted& e) {
+            ERS_INFO("Command stream end");
+            break;
+        }
+        app.outcome = {};
+        appfsm::process(app, command);
+        cs->send(app.outcome);
     }
     return 0;    
 }

@@ -13,6 +13,7 @@ namespace dunedaq::appfwk::cmd {
     using json = nlohmann::json;
 
     NLOHMANN_JSON_SERIALIZE_ENUM( Id, {
+            { dunedaq::appfwk::cmd::Id::undef, "undef" },
             { dunedaq::appfwk::cmd::Id::exec, "exec" },
             { dunedaq::appfwk::cmd::Id::init, "init" },
             { dunedaq::appfwk::cmd::Id::conf, "conf" },
@@ -21,161 +22,20 @@ namespace dunedaq::appfwk::cmd {
             { dunedaq::appfwk::cmd::Id::scrap, "scrap" },
             { dunedaq::appfwk::cmd::Id::fina, "fina" },
             { dunedaq::appfwk::cmd::Id::term, "term" },
-            { dunedaq::appfwk::cmd::Id::undef, "undef" },
         })
 
-    // Converters for Payload
-    // Associate data to a recipient
-    inline void to_json(json& j, const Payload& obj) {
-        j["recipient"] = obj.recipient;
+    // Converters for Command
+    // A command
+    inline void to_json(json& j, const Command& obj) {
+        j["id"] = obj.id;
         j["data"] = obj.data;
     }
-    inline void from_json(const json& j, Payload& obj) {
-        if (j.contains("recipient")) {
-            j.at("recipient").get_to(obj.recipient);
+    inline void from_json(const json& j, Command& obj) {
+        if (j.contains("id")) {
+            j.at("id").get_to(obj.id);
         }
         if (j.contains("data")) {
             obj.data = j.at("data");
-        }
-    }
-    // Converters for Object
-    // A command to a process
-    inline void to_json(json& j, const Object& obj) {
-        j["id"] = obj.id;
-        j["payloads"] = obj.payloads;
-    }
-    inline void from_json(const json& j, Object& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payloads")) {
-            j.at("payloads").get_to(obj.payloads);
-        }
-    }
-    // Converters for Exec
-    // FSM event type for command Exec
-    inline void to_json(json& j, const Exec& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Exec& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Init
-    // FSM event type for command Init
-    inline void to_json(json& j, const Init& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Init& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Conf
-    // FSM event type for command Conf
-    inline void to_json(json& j, const Conf& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Conf& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Start
-    // FSM event type for command Start
-    inline void to_json(json& j, const Start& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Start& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Stop
-    // FSM event type for command Stop
-    inline void to_json(json& j, const Stop& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Stop& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Scrap
-    // FSM event type for command Scrap
-    inline void to_json(json& j, const Scrap& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Scrap& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Fina
-    // FSM event type for command Fina
-    inline void to_json(json& j, const Fina& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Fina& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Term
-    // FSM event type for command Term
-    inline void to_json(json& j, const Term& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Term& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
-        }
-    }
-    // Converters for Undef
-    // FSM event type for command Undef
-    inline void to_json(json& j, const Undef& obj) {
-        j["id"] = obj.id;
-        j["payload"] = obj.payload;
-    }
-    inline void from_json(const json& j, Undef& obj) {
-        if (j.contains("id")) {
-            j.at("id").get_to(obj.id);
-        }
-        if (j.contains("payload")) {
-            j.at("payload").get_to(obj.payload);
         }
     }
 

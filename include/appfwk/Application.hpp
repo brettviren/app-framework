@@ -7,29 +7,29 @@
 
 namespace dunedaq::appfwk {
 
-    class Application : public CommandHandler, public AppFSMFE {
+    class Application : public appfsm::FE {
         std::vector<CommandHandler::pointer> pipeline_;
 
       public:
 
         using object_t = nlohmann::json;
 
-        Application(std::string name);
-        virtual ~Application();
+        object_t outcome;       // may be set by handlers
 
-        // CommandHandler
-        virtual object_t handle(object_t cmdobj) { return cmdobj; };
-
-
-        virtual void handle_init(const cmd::Init& evt) {};
-        virtual void handle_conf(const cmd::Conf& evt) {};
-        virtual void handle_start(const cmd::Start& evt) {};
-        virtual void handle_stop(const cmd::Stop& evt) {};
-        virtual void handle_scrap(const cmd::Scrap& evt) {};
-        virtual void handle_fina(const cmd::Fina& evt) {};
+        // FSM actions
+        virtual void handle_exec(const cmd::Exec& evt){}
+        virtual void handle_init(const cmd::Init& evt);
+        virtual void handle_conf(const cmd::Conf& evt);
+        virtual void handle_start(const cmd::Start& evt);
+        virtual void handle_stop(const cmd::Stop& evt);
+        virtual void handle_scrap(const cmd::Scrap& evt);
+        virtual void handle_fina(const cmd::Fina& evt);
+        virtual void handle_term(const cmd::Term& evt){}
 
         /// Add to the pipeline structure.
         void append(CommandHandler::pointer cd);
+
+      private:
 
     };
     using AppFSM = boost::msm::back::state_machine<Application>;

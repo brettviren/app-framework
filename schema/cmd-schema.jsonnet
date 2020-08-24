@@ -1,6 +1,14 @@
-// Interface to CCM schema.
-//
-// User schema may import this module to reuse parts.
+/** CCM command level schema
+* 
+* The CCM command schema covers a high-level part of an overall schema
+* which is general across application implementations.
+* 
+* A CCM command consists merely of a command identifier (name/ID/enum)
+* and unstructured command data.
+*
+* Additional "application-level" schema is likely applied to the command data.
+*/
+
 
 local moo = import "moo.jsonnet";
 local re = moo.schema.re;
@@ -36,70 +44,27 @@ function(schema) {
 
     // An eight byte int
     long: schema.number("Long", dtype="i8"),
-    ulong: schema.number("Long", dtype="u8"),
+    ulong: schema.number("ULong", dtype="u8"),
 
-    // CCM commands and command dispatch protocol.
-    //
-    // A CCM command is consumed by a process (eg DAQProcess).  The
-    // command has a name and a payload.  For appfwk processes, the
-    // payload is structured as a map of recipients of command data.
-    // A recipient is some named process-dependent substructure (eg,
-    // DAQProcess has named DAQModule instances).  The recipient may
-    // be an empty string in which case the process should intrepret
-    // the corresponding payload to apply to the process as a whole
-    // (or eg to all substructure equivalently).  As the leaf command
-    // data must be interpreted in a particular context, its
-    // representation in the general context is left as an "any".
-    // Additional schema may be applied in the specific contexts.  For
-    // this to work obviously relies on colusion in how the schema are
-    // interprted.  We describe the schema for these individual parts:
-
-    // Every CCM command has an ID number/enum. 
+    // The CCM command ID/name.  It is represented as a literal string
+    // from an enumerated set.
     id: schema.enum(
         "Id",
         ccm.commands.names,
         default="undef",
         doc="The set of expected command identifiers"),
-    
-    // The command recipient is either an empty string (applies to
-    // "all" of the process in parts or whole) or names substructure
-    // of the process.
-    recipient: schema.string("Recipient",
-                             pattern='^$|%s' % self.ident),
 
-    // Command data is what a recipient gets.  In the general context,
-    // its precise schema is unknown and so it is represented as an
-    // "any".  Other schema may be applied in a more specific context
-    // to resolve any ambiguity.
+    // Command data schema is left open at this level.  Resolving it
+    // is left to the application-level schema.
     data: schema.any("Data"),
 
-    // The command payload is the object mapping recipients to their
-    // data.
-    payload: schema.record("Payload", fields = [
-        schema.field("recipient", $.recipient, "",
-                      doc="Recipient of command data"),
-        schema.field("data", $.data,
-                     doc="Command data")
-    ], doc="Associate data to a recipient"),
-    payloads: schema.sequence("Payloads", $.payload),
-
-    // Wrap everything up into a single object.
-    object: schema.record("Object", fields = [
-        schema.field("id", $.id, "Id::undef", doc="The command ID number"),
-        schema.field("payloads", $.payloads, doc="The command payloads")
-    ], doc="A command to a process"),
-
-
-    // The appfwk inserts an FSM between command source and command
-    // execution in order to protect the process from unknown commands
-    // or unexpected ordering.  Each FSM event must be of a specific
-    // (C++) type so we make a set of little structs.
-
-    fsmevts: [schema.record(N, fields = [
-        schema.field("id", $.id, "Id::"+std.asciiLower(N), doc="Command ID number"),
-        schema.field("payload", $.payload, doc="Command payload data"),
-    ], doc="FSM event type for command "+N) for N in ccm.commands.Names],
+    // Wrap everything up into a single command.
+    command: schema.record("Command", fields = [
+        schema.field("id", $.id, "Id::undef", doc="The command identifier"),
+        schema.field("data", $.data, doc="The command data")
+    ], doc="A command"),
 
     types: [$.ident, $.letter, $.filepath, $.bool, $.short, $.int, $.long, $.float, $.double,
-            $.id, $.recipient, $.data, $.payload, $.payloads, $.object] + self.fsmevts,
+            $.id, $.data, $.command],
+
 }
