@@ -1,11 +1,15 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
  */
-{% set nsmarker = model.namespace.replace(":","_").replace(".","_").upper() +"_"+ model.name.upper() + "_NLJS_HPP" %}
+{% set nsmarker = model.meta.ns.replace(":","_").replace(".","_").upper() + "_NLJS_HPP" %}
 #ifndef {{ nsmarker }}
 #define {{ nsmarker }}
 
-{{model.structincs}}
+#include "{{model.meta.incdir}}/{{model.meta.name}}Structs{{model.meta.ext}}"
+{% for dep in model.meta.deps %}
+#include "{{dep.incdir}}/{{dep.name}}Nljs{{dep.ext}}"
+{% endfor %}
+
 #include <nlohmann/json.hpp>
 
 {% set any_fields = [] %}
@@ -13,7 +17,7 @@
 {% do any_fields.append(r.name) %}
 {% endfor %}
 
-namespace {{ model.namespace }} {
+namespace {{ model.meta.ns }} {
 
     using json = nlohmann::json;
 
@@ -21,7 +25,7 @@ namespace {{ model.namespace }} {
     {% if t.type == "enum" %}
     NLOHMANN_JSON_SERIALIZE_ENUM( {{t.name}}, {
             {% for sname in t.symbols %}
-            { {{model.namespace}}::{{t.name}}::{{sname}}, "{{sname}}" },
+            { {{model.meta.ns}}::{{t.name}}::{{sname}}, "{{sname}}" },
             {% endfor %}
         })
     {% endif %}
@@ -57,6 +61,6 @@ namespace {{ model.namespace }} {
     {% endfor %}
 
 
-} // namespace {{ model.namespace }}
+} // namespace {{ model.meta.ns }}
 
 #endif // {{ nsmarker }}

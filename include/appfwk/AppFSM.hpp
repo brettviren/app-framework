@@ -1,15 +1,16 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
  */
-#ifndef DUNEDAQ__APPFWK__APP_APP_FSM_HPP
-#define DUNEDAQ__APPFWK__APP_APP_FSM_HPP
+#ifndef DUNEDAQ__APPFWK__APP_FSM_HPP
+#define DUNEDAQ__APPFWK__APP_FSM_HPP
 
 #include "appfwk/Issues.hpp"
 #include <boost/msm/front/state_machine_def.hpp>
 #include <nlohmann/json.hpp>
 
-#include "AppNljs.hpp"
-#include "CmdNljs.hpp"
+#include "appfwk/AppNljs.hpp"
+
+#include <nlohmann/json.hpp>
 
 namespace dunedaq::appfwk::app {
 
@@ -49,22 +50,24 @@ namespace dunedaq::appfwk::app {
         /// The process is operating
         struct Running : public boost::msm::front::state<> {};
 
+        using initial_state = Ready;
+
         /// FSM Actions:
-        virtual void handle_conf(const Conf& evt) = 0;
-        virtual void handle_fina(const Fina& evt) = 0;
-        virtual void handle_forward(const Start& evt) = 0;
-        virtual void handle_forward(const Stop& evt) = 0;
-        virtual void handle_init(const Init& evt) = 0;
-        virtual void handle_scrap(const Scrap& evt) = 0;
+        virtual void handle(const Conf& evt) = 0;
+        virtual void handle(const Fina& evt) = 0;
+        virtual void handle(const Init& evt) = 0;
+        virtual void handle(const Scrap& evt) = 0;
+        virtual void handle(const Start& evt) = 0;
+        virtual void handle(const Stop& evt) = 0;
 
         // clang-format off
         struct transition_table: boost::mpl::vector<
-            a_row<       Ready,         Init,  Initialized, &FE::handle_init>,
-            a_row< Initialized,         Conf,   Configured, &FE::handle_conf>,
-            a_row<  Configured,        Start,      Running, &FE::handle_forward>,
-            a_row<     Running,         Stop,   Configured, &FE::handle_forward>,
-            a_row<  Configured,        Scrap,  Initialized, &FE::handle_scrap>,
-            a_row< Initialized,         Fina,        Ready, &FE::handle_fina>
+            a_row<       Ready,         Init,  Initialized, &FE::handle>,
+            a_row< Initialized,         Conf,   Configured, &FE::handle>,
+            a_row<  Configured,        Start,      Running, &FE::handle>,
+            a_row<     Running,         Stop,   Configured, &FE::handle>,
+            a_row<  Configured,        Scrap,  Initialized, &FE::handle>,
+            a_row< Initialized,         Fina,        Ready, &FE::handle>
             > {};
         // clang-format on
     };
@@ -72,7 +75,9 @@ namespace dunedaq::appfwk::app {
     /// Inject an typed event derived from the object.
     template<class BE>
     void process(BE& be, nlohmann::json obj) {
-        auto o = obj.get<dunedaq::appfsk::cmd::Command>();
+        auto o = obj.get<Command>();
+        std::string msg = "\nprocess: " + str(o.id) + "\n" + o.data.dump(4);
+        ERS_INFO(msg);
         switch (o.id) {
             case Id::conf: be.process_event(o.data.get<Conf>()); break;
             case Id::fina: be.process_event(o.data.get<Fina>()); break;
@@ -84,8 +89,8 @@ namespace dunedaq::appfwk::app {
                 throw SchemaError(ERS_HERE, "unknown command type");
                 break;
         }
-    };
+    }
 
 } // namespace dunedaq::appfwk::app
 
-#endif // DUNEDAQ__APPFWK__APP_APP_FSM_HPP
+#endif // DUNEDAQ__APPFWK__APP_FSM_HPP

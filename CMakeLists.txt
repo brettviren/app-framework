@@ -19,7 +19,7 @@ set(APPFWK_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers Folly::folly nlohman
 daq_point_build_to( src )
 
 add_library(appfwk SHARED src/QueueRegistry.cpp src/DAQProcess.cpp src/DAQModule.cpp
-  src/Application.cpp src/CommandSource.cpp)
+  src/Application.cpp src/CommandHandler.cpp src/CommandSource.cpp)
 target_link_libraries(appfwk ${APPFWK_DEPENDENCIES})
 target_include_directories(appfwk PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
 

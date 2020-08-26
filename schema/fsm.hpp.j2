@@ -1,7 +1,7 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
  */
-{% set nsmarker = model.namespace.replace(":","_").replace(".","_").upper() +"_"+ model.name.upper() + "_FSM_HPP" %}
+{% set nsmarker = model.meta.ns.replace(":","_").replace(".","_").upper() + "_FSM_HPP" %}
 #ifndef {{nsmarker}}
 #define {{nsmarker}}
 
@@ -9,16 +9,17 @@
 #include <boost/msm/front/state_machine_def.hpp>
 #include <nlohmann/json.hpp>
 
-{{model.structincs}}
-#include "CmdNljs.hpp"
+#include "{{model.meta.incdir}}/{{model.meta.name}}Nljs{{model.meta.ext}}"
 
-namespace {{ model.namespace }} {
+#include <nlohmann/json.hpp>
 
-    /** @brief Abstract MSM front end for {{model.name}}
+namespace {{ model.meta.ns }} {
+
+    /** @brief Abstract MSM front end for {{model.meta.name}}
      *
      * Inherit from this class:
      *
-     *     class MyFE : public {{ model.namespace }}::FE;
+     *     class MyFE : public {{ model.meta.ns }}::FE;
      *
      * Implement the action methods.
      *
@@ -33,7 +34,7 @@ namespace {{ model.namespace }} {
      *
      * Or, to automatically handle the re-typing:
      *
-     *     {{ model.namespace }}::process(sm, obj);
+     *     {{ model.meta.ns }}::process(sm, obj);
      *
      */
     struct FE : public boost::msm::front::state_machine_def<FE> {
@@ -45,6 +46,8 @@ namespace {{ model.namespace }} {
         /// {{state.doc}}
         struct {{state.name}} : public boost::msm::front::state<> {};
         {% endfor %}
+
+        using initial_state = {{model.fsm.initial}};
 
         /// FSM Actions:
         {% for act in model.fsm.actions %}
@@ -63,7 +66,9 @@ namespace {{ model.namespace }} {
     /// Inject an typed event derived from the object.
     template<class BE>
     void process(BE& be, nlohmann::json obj) {
-        auto o = obj.get<dunedaq::appfsk::cmd::Command>();
+        auto o = obj.get<Command>();
+        std::string msg = "\nprocess: " + str(o.id) + "\n" + o.data.dump(4);
+        ERS_INFO(msg);
         switch (o.id) {
             {% for evt in model.fsm.events %}
             case Id::{{evt|lower}}: be.process_event(o.data.get<{{evt}}>()); break;
@@ -72,8 +77,8 @@ namespace {{ model.namespace }} {
                 throw SchemaError(ERS_HERE, "unknown command type");
                 break;
         }
-    };
+    }
 
-} // namespace {{model.namespace}}
+} // namespace {{model.meta.ns}}
 
 #endif // {{ nsmarker }}

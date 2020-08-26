@@ -1,10 +1,10 @@
-/*
- * This file is 100% generated.  Any manual edits will likely be lost.
- */
 {%- macro field_type(ft) %}
 {% if ft is mapping %}std::vector<{{field_type(ft["items"])}}>{% elif ft == "string" %}std::string{% elif ft == "any"%}model.anytype{% else %}{{ ft }}{% endif %}
 {%- endmacro -%}
-{% set nsmarker = model.namespace.replace(":","_").replace(".","_").upper() +"_"+ model.name.upper() + "_STRUCTS_HPP" %}
+/*
+ * This file is 100% generated.  Any manual edits will likely be lost.
+ */
+{% set nsmarker = model.meta.ns.replace(":","_").replace(".","_").upper() +"_STRUCTS_HPP" %}
 #ifndef {{nsmarker}}
 #define {{nsmarker}}
 
@@ -27,7 +27,9 @@
 {% endfor %}
 {% endfor %}
 {% if any_fields|length > 0 %}
-{{ model.anyincludes }}
+{% for anyinc in model.any.incs %}
+#include <{{anyinc}}>
+{% endfor %}
 {% endif %}
 {% if enum_fields|length > 0 %}
 #include <map>
@@ -39,7 +41,25 @@
 #include <vector>
 {% endif %}
 
-namespace {{ model.namespace }} {
+{% for dep in model.meta.deps %}
+#include "{{dep.incdir}}/{{dep.name}}Structs{{dep.ext}}"
+{% endfor %}
+
+// Hand-written code may find it handy to use the codegen namespace
+// via CPP macro to insulate any changes in schema.  Short and fully
+// qualified versions:
+#ifndef {{model.meta.name|upper}}_NS 
+#define {{model.meta.name|upper}}_NS {{ model.meta.ns.split("::")[-1] }}
+#endif
+#ifndef {{model.meta.name|upper}}_FQNS
+#define {{model.meta.name|upper}}_FQNS {{ model.meta.ns }}
+#endif
+
+namespace {{ model.meta.ns }} {
+
+    {% for dep in model.meta.deps %}
+    using namespace {{dep.ns}};
+    {% endfor %}
 
     {% for t in model.types %}
     {% if t.type == "enum" %}
@@ -90,7 +110,7 @@ namespace {{ model.namespace }} {
     {% for t in model.types %}
     {% if t.type == "any" %}
     // @brief {{t.doc}}
-    using {{ t.name }} = {{ model.anytype }};
+    using {{ t.name }} = {{ model.any.type }};
     {% endif %}
     {% endfor %}
     {% for t in model.types %}
@@ -106,6 +126,6 @@ namespace {{ model.namespace }} {
     {% endif %}
     {% endfor %}
 
-} // namespace {{model.namespace}}
+} // namespace {{model.meta.ns}}
 
 #endif // {{ nsmarker }}

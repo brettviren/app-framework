@@ -7,32 +7,48 @@
 
 namespace dunedaq::appfwk {
 
-    class Application : public appfsm::FE {
-        std::vector<CommandHandler::pointer> pipeline_;
+    // FE to FSM.  Don't use directly.  Instead use AppFSM.
+    class Application : public APP_FQNS::FE {
 
       public:
 
         using object_t = nlohmann::json;
 
-        object_t outcome;       // may be set by handlers
-
         // FSM actions
-        virtual void handle_exec(const cmd::Exec& evt){}
-        virtual void handle_init(const cmd::Init& evt);
-        virtual void handle_conf(const cmd::Conf& evt);
-        virtual void handle_start(const cmd::Start& evt);
-        virtual void handle_stop(const cmd::Stop& evt);
-        virtual void handle_scrap(const cmd::Scrap& evt);
-        virtual void handle_fina(const cmd::Fina& evt);
-        virtual void handle_term(const cmd::Term& evt){}
+        virtual void handle(const APP_FQNS::Init& evt);
+        virtual void handle(const APP_FQNS::Conf& evt);
+        virtual void handle(const APP_FQNS::Start& evt);
+        virtual void handle(const APP_FQNS::Stop& evt);
+        virtual void handle(const APP_FQNS::Scrap& evt);
+        virtual void handle(const APP_FQNS::Fina& evt);
 
-        /// Add to the pipeline structure.
-        void append(CommandHandler::pointer cd);
+        // Forward comand to all addressed handlers.  Called by FSM
+        // handle methods.  The final result is available as outcome.
+        void forward(const CMD_FQNS::Command& cmd);
+
+        // Return outcome of last command processing as a reply.
+        CMD_FQNS::Reply outcome() const { return outcome_; }
 
       private:
 
+        // Collect command handler output as a reply
+        CMD_FQNS::Reply outcome_;
+
+        struct HInfo {
+            APP_FQNS::TypeName tn;
+            CommandHandler::pointer handler;
+        };
+        std::vector<HInfo> handlers_;
+        std::vector<HInfo> match(APP_FQNS::TypeName tn);
     };
+
+    // This is what you actually use 
     using AppFSM = boost::msm::back::state_machine<Application>;
+
+    // AppFSM app;
+    // APP_FQNS::process(app, cmdobj);
+    // auto rep = app->outcome();
+    
 }
 
 

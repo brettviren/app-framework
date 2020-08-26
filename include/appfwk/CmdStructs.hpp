@@ -1,12 +1,25 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
- */#ifndef DUNEDAQ__APPFWK__CMD_CMD_STRUCTS_HPP
-#define DUNEDAQ__APPFWK__CMD_CMD_STRUCTS_HPP
+ */
+#ifndef DUNEDAQ__APPFWK__CMD_STRUCTS_HPP
+#define DUNEDAQ__APPFWK__CMD_STRUCTS_HPP
 
 #include <nlohmann/json.hpp>
 #include <map>
 
+
+// Hand-written code may find it handy to use the codegen namespace
+// via CPP macro to insulate any changes in schema.  Short and fully
+// qualified versions:
+#ifndef CMD_NS 
+#define CMD_NS cmd
+#endif
+#ifndef CMD_FQNS
+#define CMD_FQNS dunedaq::appfwk::cmd
+#endif
+
 namespace dunedaq::appfwk::cmd {
+
 
     /// @brief The set of expected command identifiers
     enum class Id: unsigned {
@@ -83,6 +96,13 @@ namespace dunedaq::appfwk::cmd {
     };
 
 
+    /// @brief A command
+    struct Reply {
+        Id id{ Id::undef };
+        Data data{  };
+    };
+
+
 } // namespace dunedaq::appfwk::cmd
 
-#endif // DUNEDAQ__APPFWK__CMD_CMD_STRUCTS_HPP
+#endif // DUNEDAQ__APPFWK__CMD_STRUCTS_HPP

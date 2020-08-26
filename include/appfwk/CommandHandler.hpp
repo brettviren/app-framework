@@ -1,7 +1,8 @@
 #ifndef DUNEDAQ_APPFWK_COMMANDHANDLER_HPP
 #define DUNEDAQ_APPFWK_COMMANDHANDLER_HPP
 
-#include <cetlib/BasicPluginFactory.h>
+#include "appfwk/AppStructs.hpp"
+
 #include <nlohmann/json.hpp>
 
 namespace dunedaq::appfwk {
@@ -12,20 +13,18 @@ namespace dunedaq::appfwk {
 
         using object_t = nlohmann::json;
 
-        // must implement to get naem
+        // Implement if you want the instance name.
         CommandHandler(std::string /*name*/) {}
         virtual ~CommandHandler() {}
-        virtual object_t handle(object_t cmdobj) = 0;
+
+        /// Implement to receive commands.  Return result, if any.
+        virtual object_t handle(const APP_FQNS::Command& command) = 0;
     };
 
     /** @brief Load a CommandHandler plugin and return an instance.
      */
-    inline std::shared_ptr<CommandHandler>
-    makeCommandHandler(std::string const& plugin_name, std::string const& inst)
-    {
-        static cet::BasicPluginFactory bpf("duneCommandHandler", "make");
-        return bpf.makePlugin<std::shared_ptr<CommandHandler>>(plugin_name, inst);
-    }
+    CommandHandler::pointer
+    makeCommandHandler(std::string const& plugin_name, std::string const& inst);
 
 }
 

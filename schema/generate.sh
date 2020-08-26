@@ -50,6 +50,6 @@ do_one () {
 }
 
 do_one Cmd "${schemadir}/cmd-codegen.jsonnet" "$incdir" Nljs Structs
-do_one App "${schemadir}/app-codegen.jsonnet" "$incdir" Nljs Structs
-do_one App "${schemadir}/app-fsmgen.jsonnet" "$incdir" FSM
+do_one App "${schemadir}/app-codegen.jsonnet" "$incdir" Nljs Structs FSM
+do_one Dqm "${schemadir}/dqm-codegen.jsonnet" "$incdir" Nljs Structs
 do_one Test "${tstdir}/test-codegen.jsonnet" "$tstdir" Nljs Structs

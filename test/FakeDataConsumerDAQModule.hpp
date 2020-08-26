@@ -61,7 +61,7 @@ private:
   ThreadHelper thread_;
 
   // Generated configuration object
-  FakeDataConsumerCfg cfg_;
+  TEST_FQNS::FakeDataConsumerCfg cfg_;
 
   // Derived configurable quantities
   std::chrono::milliseconds queueTimeout_;

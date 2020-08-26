@@ -1,10 +1,11 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
  */
-#ifndef DUNEDAQ__APPFWK__CMD_CMD_NLJS_HPP
-#define DUNEDAQ__APPFWK__CMD_CMD_NLJS_HPP
+#ifndef DUNEDAQ__APPFWK__CMD_NLJS_HPP
+#define DUNEDAQ__APPFWK__CMD_NLJS_HPP
 
-#include "CmdStructs.hpp"
+#include "appfwk/CmdStructs.hpp"
+
 #include <nlohmann/json.hpp>
 
 
@@ -38,8 +39,22 @@ namespace dunedaq::appfwk::cmd {
             obj.data = j.at("data");
         }
     }
+    // Converters for Reply
+    // A command
+    inline void to_json(json& j, const Reply& obj) {
+        j["id"] = obj.id;
+        j["data"] = obj.data;
+    }
+    inline void from_json(const json& j, Reply& obj) {
+        if (j.contains("id")) {
+            j.at("id").get_to(obj.id);
+        }
+        if (j.contains("data")) {
+            obj.data = j.at("data");
+        }
+    }
 
 
 } // namespace dunedaq::appfwk::cmd
 
-#endif // DUNEDAQ__APPFWK__CMD_CMD_NLJS_HPP
+#endif // DUNEDAQ__APPFWK__CMD_NLJS_HPP

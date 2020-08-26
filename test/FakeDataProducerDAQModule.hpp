@@ -59,7 +59,7 @@ private:
   void do_work(std::atomic<bool>& running_flag);
 
   // Generated configuration object
-  FakeDataProducerCfg cfg_;
+  TEST_FQNS::FakeDataProducerCfg cfg_;
 
   // Derived configurable quantities
   std::unique_ptr<DAQSink<std::vector<int>>> outputQueue_;

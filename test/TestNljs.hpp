@@ -1,14 +1,15 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
  */
-#ifndef DUNEDAQ__APPFWK_TEST_NLJS_HPP
-#define DUNEDAQ__APPFWK_TEST_NLJS_HPP
+#ifndef DUNEDAQ__APPFWK__TEST_NLJS_HPP
+#define DUNEDAQ__APPFWK__TEST_NLJS_HPP
 
-#include "TestStructs.hpp"
+#include "./TestStructs.hpp"
+
 #include <nlohmann/json.hpp>
 
 
-namespace dunedaq::appfwk {
+namespace dunedaq::appfwk::test {
 
     using json = nlohmann::json;
 
@@ -67,6 +68,6 @@ namespace dunedaq::appfwk {
     }
 
 
-} // namespace dunedaq::appfwk
+} // namespace dunedaq::appfwk::test
 
-#endif // DUNEDAQ__APPFWK_TEST_NLJS_HPP
+#endif // DUNEDAQ__APPFWK__TEST_NLJS_HPP

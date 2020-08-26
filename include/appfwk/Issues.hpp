@@ -64,6 +64,11 @@ namespace dunedaq {
     ERS_DECLARE_ISSUE(appfwk, InternalError,
                       "Internal error: " << what,
                       ((std::string)what))
+
+    // Throw if a lookup of a component fails.
+    ERS_DECLARE_ISSUE(appfwk, MissingComponent,
+                      "No such component: " << what,
+                      ((std::string)what))
 }
 
 

@@ -1,11 +1,13 @@
-local moo = import "moo.jsonnet";
+local ccm = import "ccm.jsonnet";
 local as = import "app-schema.jsonnet";
+ccm.fsmgen("App", as)
 
+// {
+//     local s = as(moo.schema.avro),
 
-{
-    fsm: as(moo.schema.avro).fsm,
-    name: "App",
-    namespace: "dunedaq::appfwk::app",
-    structincs: '#include "AppNljs.hpp"',
-}
+//     fsm: s.fsm,
+//     name: "App",
+//     namespace: s.namespace,
+//     structincs: '#include "AppNljs.hpp"',
+// }
 

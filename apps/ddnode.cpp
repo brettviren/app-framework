@@ -48,9 +48,8 @@ int main(int argc, char* argv[])
             ERS_INFO("Command stream end");
             break;
         }
-        app.outcome = {};
-        appfsm::process(app, command);
-        cs->send(app.outcome);
+        APP_FQNS::process(app, command);
+        cs->send(app.outcome());
     }
     return 0;    
 }

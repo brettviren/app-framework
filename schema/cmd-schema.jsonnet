@@ -16,6 +16,9 @@ local ccm = import "ccm.jsonnet";
 
 function(schema) {
 
+    // Name this schema.  
+    name: "Cmd",
+
     // An "ident" is a string with a limited "spelling".  It should be
     // used for instance names or implementation names registered with
     // a factory.
@@ -64,7 +67,14 @@ function(schema) {
         schema.field("data", $.data, doc="The command data")
     ], doc="A command"),
 
+    // The expected reply to a command.
+    reply: schema.record("Reply", fields = [
+        schema.field("id", $.id, "Id::undef", doc="The ID of command being replied to"),
+        schema.field("data", $.data, doc="The reply data")
+    ], doc="A command"),
+
+
     types: [$.ident, $.letter, $.filepath, $.bool, $.short, $.int, $.long, $.float, $.double,
-            $.id, $.data, $.command],
+            $.id, $.data, $.command, $.reply],
 
 }

@@ -33,16 +33,16 @@ FakeDataConsumerDAQModule::FakeDataConsumerDAQModule(const std::string& name)
   , queueTimeout_(100)
   , inputQueue_(nullptr)
 {
-  register_command(cmd::IdNames::conf, &FakeDataConsumerDAQModule::do_configure);
-  register_command(cmd::IdNames::scrap, &FakeDataConsumerDAQModule::do_unconfigure);
-  register_command(cmd::IdNames::start, &FakeDataConsumerDAQModule::do_start);
-  register_command(cmd::IdNames::stop, &FakeDataConsumerDAQModule::do_stop);
+  register_command(CMD_FQNS::IdNames::conf, &FakeDataConsumerDAQModule::do_configure);
+  register_command(CMD_FQNS::IdNames::scrap, &FakeDataConsumerDAQModule::do_unconfigure);
+  register_command(CMD_FQNS::IdNames::start, &FakeDataConsumerDAQModule::do_start);
+  register_command(CMD_FQNS::IdNames::stop, &FakeDataConsumerDAQModule::do_stop);
 }
 
 void
 FakeDataConsumerDAQModule::do_configure(data_t obj)
 {
-  cfg_ = obj.get<FakeDataConsumerCfg>();
+  cfg_ = obj.get<TEST_FQNS::FakeDataConsumerCfg>();
   inputQueue_.reset(new DAQSource<std::vector<int>>(cfg_.input));
   queueTimeout_ = std::chrono::milliseconds(cfg_.queue_timeout_ms);
 }

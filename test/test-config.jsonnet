@@ -1,12 +1,16 @@
 // command helpers, move to module
 local ccm = import "ccm.jsonnet";
+local cmd_schema = import "cmd-schema.jsonnet";
+local app_schema = import "app-schema.jsonnet";
+
 local ch = {
 
     // round trip to make sure the name is defined.
     CmdName(n) :: ccm.commands.names[ccm.commands.name2id(n)],
 
-    Command(name, payloads=[]) :: {
-        id: $.CmdName(name), payloads: payloads },
+    // Note: this is manually defined and may not match schema.
+    Command(name, data=null) :: {
+        id: $.CmdName(name), data: data },
 
     Payload(recipient, data) :: {
         recipient:recipient, data:data },

@@ -1,11 +1,24 @@
 /*
  * This file is 100% generated.  Any manual edits will likely be lost.
- */#ifndef DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
-#define DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
+ */
+#ifndef DUNEDAQ__APPFWK__TEST_STRUCTS_HPP
+#define DUNEDAQ__APPFWK__TEST_STRUCTS_HPP
 
 #include <string>
 
-namespace dunedaq::appfwk {
+
+// Hand-written code may find it handy to use the codegen namespace
+// via CPP macro to insulate any changes in schema.  Short and fully
+// qualified versions:
+#ifndef TEST_NS 
+#define TEST_NS test
+#endif
+#ifndef TEST_FQNS
+#define TEST_FQNS dunedaq::appfwk::test
+#endif
+
+namespace dunedaq::appfwk::test {
+
 
 
     /// @brief Configuration for FakeDataProducerDAQMOdule
@@ -28,6 +41,6 @@ namespace dunedaq::appfwk {
     };
 
 
-} // namespace dunedaq::appfwk
+} // namespace dunedaq::appfwk::test
 
-#endif // DUNEDAQ__APPFWK_TEST_STRUCTS_HPP
+#endif // DUNEDAQ__APPFWK__TEST_STRUCTS_HPP
