@@ -35,6 +35,20 @@ namespace dunedaq::appfwk::dqm {
             j.at("capacity").get_to(obj.capacity);
         }
     }
+    // Converters for ModInit
+    // Module 'init' data structure
+    inline void to_json(json& j, const ModInit& obj) {
+        j["plugin"] = obj.plugin;
+        j["data"] = obj.data;
+    }
+    inline void from_json(const json& j, ModInit& obj) {
+        if (j.contains("plugin")) {
+            j.at("plugin").get_to(obj.plugin);
+        }
+        if (j.contains("data")) {
+            obj.data = j.at("data");
+        }
+    }
 
 
 } // namespace dunedaq::appfwk::dqm

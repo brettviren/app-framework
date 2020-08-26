@@ -7,11 +7,11 @@
 using namespace dunedaq::appfwk;
 
 struct QueueCH : public CommandHandler {
-    std::string name_;
-    QueueCH(std::string name) : CommandHandler(name), name_(name) {}
+
+    QueueCH(std::string name) : CommandHandler(name) {}
     virtual ~QueueCH() {}
     virtual object_t handle(const CMD_FQNS::Command& cmd) {
-        ERS_INFO("Handle command: " << str(cmd.id) << "\n" << cmd.data.dump(4));
+        ERS_INFO("Queue command handler got: " << str(cmd.id) << "\n" << cmd.data.dump(4));
 
         if(cmd.id == CMD_FQNS::Id::init) {
             auto ads = cmd.data.get<APP_FQNS::Addressed>();

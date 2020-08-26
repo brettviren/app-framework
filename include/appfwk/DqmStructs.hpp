@@ -4,7 +4,9 @@
 #ifndef DUNEDAQ__APPFWK__DQM_STRUCTS_HPP
 #define DUNEDAQ__APPFWK__DQM_STRUCTS_HPP
 
+#include <nlohmann/json.hpp>
 #include <map>
+#include <string>
 
 #include "appfwk/CmdStructs.hpp"
 
@@ -67,11 +69,20 @@ namespace dunedaq::appfwk::dqm {
         return it->second;
     }
 
+    // @brief 
+    using Data = nlohmann::json;
 
     /// @brief Queue 'init' data structure
     struct QueueInit {
         Kind kind{  };
         uint64_t capacity{  };
+    };
+
+
+    /// @brief Module 'init' data structure
+    struct ModInit {
+        std::string plugin{  };
+        Data data{  };
     };
 
 

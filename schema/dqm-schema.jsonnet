@@ -17,6 +17,15 @@ function(schema) {
         ], doc="Queue 'init' data structure"),
     },
 
-    types: [cmd.ulong, cmd.ident, self.queue.kind, self.queue.spec],
+    mod: {
+        spec: schema.record("ModInit", fields = [
+            schema.field("plugin", cmd.ident, doc="Module plugin name"),
+            schema.field("data", cmd.data, doc="Any init information to the module"),
+        ], doc="Module 'init' data structure"),
+    },
+
+    types: [cmd.ulong, cmd.ident, cmd.data,
+            self.queue.kind, self.queue.spec,
+            self.mod.spec],
 }
 

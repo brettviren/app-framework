@@ -46,6 +46,8 @@ add_library(appfwk_noisyCommandHandler_duneCommandHandler src/NoisyCommandHandle
 target_link_libraries(appfwk_noisyCommandHandler_duneCommandHandler appfwk)
 add_library(appfwk_queueCommandHandler_duneCommandHandler src/QueueCommandHandler.cpp)
 target_link_libraries(appfwk_queueCommandHandler_duneCommandHandler appfwk)
+add_library(appfwk_moduleCommandHandler_duneCommandHandler src/ModuleCommandHandler.cpp)
+target_link_libraries(appfwk_moduleCommandHandler_duneCommandHandler appfwk)
 
 
 ##############################################################################
