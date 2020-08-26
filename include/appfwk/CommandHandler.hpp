@@ -24,7 +24,22 @@ namespace dunedaq::appfwk {
     /** @brief Load a CommandHandler plugin and return an instance.
      */
     CommandHandler::pointer
-    makeCommandHandler(std::string const& plugin_name, std::string const& inst);
+    makeCommandHandler(std::string const& short_plugin_name, std::string const& inst);
+
+    /** Implmentation add like:
+        extern "C" {
+          std::shared_ptr<dunedaq::appfwk::CommandHandler> make(std::string inst) { 
+          return std::shared_ptr<dunedaq::appfwk::CommandHandler>(new xxxCommandHandler(uri));
+        }
+      }
+
+      And in CMakeLists.txt like:
+
+      add_library(appfwk_xxxCommandHandler_duneCommandHandler src/xxxCommandHandler.cpp)
+      target_link_libraries(appfwk_xxxCommandHandler_duneCommandHandler appfwk)
+
+      replace "xxx" with the short plugin name
+    */
 
 }
 

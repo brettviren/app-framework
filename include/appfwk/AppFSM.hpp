@@ -79,12 +79,12 @@ namespace dunedaq::appfwk::app {
         std::string msg = "\nprocess: " + str(o.id) + "\n" + o.data.dump(4);
         ERS_INFO(msg);
         switch (o.id) {
-            case Id::conf: be.process_event(o.data.get<Conf>()); break;
-            case Id::fina: be.process_event(o.data.get<Fina>()); break;
-            case Id::init: be.process_event(o.data.get<Init>()); break;
-            case Id::scrap: be.process_event(o.data.get<Scrap>()); break;
-            case Id::start: be.process_event(o.data.get<Start>()); break;
-            case Id::stop: be.process_event(o.data.get<Stop>()); break;
+            case Id::conf    : be.process_event(Conf{o}); break;
+            case Id::fina    : be.process_event(Fina{o}); break;
+            case Id::init    : be.process_event(Init{o}); break;
+            case Id::scrap   : be.process_event(Scrap{o}); break;
+            case Id::start   : be.process_event(Start{o}); break;
+            case Id::stop    : be.process_event(Stop{o}); break;
             default:
                 throw SchemaError(ERS_HERE, "unknown command type");
                 break;

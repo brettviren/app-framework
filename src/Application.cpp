@@ -47,7 +47,7 @@ void Application::forward(const APP_FQNS::Command& cmd)
 
 void Application::handle(const APP_FQNS::Init& evt)
 {
-    ERS_INFO("Appliation init construction");
+    ERS_INFO("Appliation init construction with:\n" << evt.command.data.dump(4));
     auto ads = evt.command.data.get<APP_FQNS::Addressed>();
     for (const auto& ad : ads.addrdats) {
         ERS_INFO("construct: " << ad.tn.type << " : " << ad.tn.name);

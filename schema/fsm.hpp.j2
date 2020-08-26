@@ -71,7 +71,7 @@ namespace {{ model.meta.ns }} {
         ERS_INFO(msg);
         switch (o.id) {
             {% for evt in model.fsm.events %}
-            case Id::{{evt|lower}}: be.process_event(o.data.get<{{evt}}>()); break;
+            case Id::{{"%-8s"|format(evt|lower)}}: be.process_event({{evt}}{o}); break;
             {% endfor %}
             default:
                 throw SchemaError(ERS_HERE, "unknown command type");
