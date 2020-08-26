@@ -31,17 +31,17 @@ void Application::forward(const APP_FQNS::Command& cmd)
 {
     auto id = cmd.id;
     
-    APP_FQNS::Addressed res;
+    APP_FQNS::Addressed addr_reply;
 
     auto ads = cmd.data.get<APP_FQNS::Addressed>();
     for (const auto& ad : ads.addrdats) {
         for (auto& hi : match(ad.tn)) {
             CMD_FQNS::Command hcmd{id, ad.data};
             auto res = hi.handler->handle(hcmd);
-            res.push_back(APP_FQNS::AddrDat{ad.tn, res});
+            addr_reply.addrdats.push_back(APP_FQNS::AddrDat{ad.tn, res});
         }
     }
-    outcome_ = CMD_FQNS::Reply{id, res};
+    outcome_ = CMD_FQNS::Reply{id, addr_reply};
 }
 
 

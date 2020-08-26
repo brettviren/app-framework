@@ -69,6 +69,13 @@ namespace dunedaq {
     ERS_DECLARE_ISSUE(appfwk, MissingComponent,
                       "No such component: " << what,
                       ((std::string)what))
+
+    // Throw if a command is received for which there is no handler
+    // implemented.
+    ERS_DECLARE_ISSUE(appfwk, UnexpectedCommand,
+                      "Unexpected command: " << cmd << " received by " << who,
+                      ((std::string)cmd)
+                      ((std::string)who))
 }
 
 

@@ -1,7 +1,8 @@
 // command helpers, move to module
 local ccm = import "ccm.jsonnet";
-local cmd_schema = import "cmd-schema.jsonnet";
-local app_schema = import "app-schema.jsonnet";
+// local cmd_schema = import "cmd-schema.jsonnet";
+// local app_schema = import "app-schema.jsonnet";
+// local dqm_schema = import "dqm-schema.jsonnet";
 
 local ch = {
 
@@ -22,15 +23,24 @@ local ah = {
     Addressed(addrdats) :: { addrdats: addrdats },
 };
 
+// command handler helper structs:
+
 local noisy = {
     tn: ah.TypeName("noisy"),
     init(greeting="hi") :: { greeting:greeting },
     conf(verbosity=0) :: { verbosity: verbosity },
 };
 
+local queue = {
+    tn: ah.TypeName("queue", "queue1"),
+    init(kind="StdDeQueue", cap=10) :: { kind:kind, capacity:cap },
+};
+
 [
     ch.Command("init", 
-               ah.Addressed([ah.AddrDat(noisy.tn, noisy.init())])),
+               ah.Addressed([
+                   ah.AddrDat(noisy.tn, noisy.init()),
+                   ah.AddrDat(queue.tn, queue.init())])),
 
     ch.Command("conf",
                ah.Addressed([ah.AddrDat(noisy.tn, noisy.conf())])),

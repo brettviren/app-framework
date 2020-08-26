@@ -29,6 +29,13 @@ namespace dunedaq::appfwk {
         // Return outcome of last command processing as a reply.
         CMD_FQNS::Reply outcome() const { return outcome_; }
 
+        template <class FSM,class Event>
+        void exception_caught (Event const&, FSM&, std::exception& e)
+        {
+            // fixme: how do I chain exceptions with ers?
+            throw;
+        }
+
       private:
 
         // Collect command handler output as a reply

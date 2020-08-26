@@ -104,6 +104,7 @@ struct JsonArray : public ObjectStream {
     JsonArray(std::string name, std::iostream& io, bool isread=true)
         : ObjectStream(name, io)
         , isread(isread) {
+        arr = object_t::array();
         if (isread) slurp();
     }
 
