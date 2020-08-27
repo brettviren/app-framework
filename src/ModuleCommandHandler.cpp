@@ -16,7 +16,8 @@ struct ModCH : public CommandHandler {
     virtual ~ModCH() {}
 
     virtual object_t handle(const CMD_FQNS::Command& cmd) {
-        ERS_INFO("Module command handler got: " << str(cmd.id) << "\n" << cmd.data.dump(4));
+        ERS_INFO("Module command handler for \"" << name_ << "\" got: "
+                 << str(cmd.id) << "\n" << cmd.data.dump(4));
 
         auto data = cmd.data;
 
@@ -28,7 +29,9 @@ struct ModCH : public CommandHandler {
         if (!dmptr) {
             throw InternalError(ERS_HERE, "no such module: " + name_);
         }
-        dmptr->execute_command(str(cmd.id), data);
+        if (! data.is_null()) { // at least an empty object is needed
+            dmptr->execute_command(str(cmd.id), data);
+        }
 
         // Fixme: what to return here?
         return CMD_FQNS::Reply{cmd.id, {}};

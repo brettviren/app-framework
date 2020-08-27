@@ -54,7 +54,7 @@ local multischema(ss) = function(schemalist) {
 
         // Access name as jsonnet variable (avoid typos)
         N: {[N]:N for N in self.Names},
-        n: {[std.asciiLower(n)]:n for n in self.Names},
+        n: {[n]:n for n in self.names},
     },
 
     // fixme: describe an fsm, add template to realize it.  Assume boost::msm.

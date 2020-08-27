@@ -23,25 +23,51 @@ local ah = {
     Addressed(addrdats) :: { addrdats: addrdats },
 };
 
-// command handler helper structs:
+// Group together the tn and the commands to each *instance*
 
 local noisy = {
-    tn: ah.TypeName("noisy"),
-    init(greeting="hi") :: { greeting:greeting },
-    conf(verbosity=0) :: { verbosity: verbosity },
+    tn: ah.TypeName("noisy", "noisy1"),
+    init: { greeting:"hi" },
+    conf: { verbosity: 0 },
 };
 
-local queue = {
-    tn: ah.TypeName("queue", "queue1"),
-    init(kind="StdDeQueue", cap=10) :: { kind:kind, capacity:cap },
+local queue(name, kind="StdDeQueue", capacity=10) =
+    ah.AddrDat(ah.TypeName(kind, name), { kind:kind, capacity:capacity});
+
+local queues = {
+    tn: ah.TypeName("queue"),
+    init: ah.Addressed([queue("queue1")]),        
 };
 
-[
-    ch.Command("init", 
-               ah.Addressed([
-                   ah.AddrDat(noisy.tn, noisy.init()),
-                   ah.AddrDat(queue.tn, queue.init())])),
 
-    ch.Command("conf",
-               ah.Addressed([ah.AddrDat(noisy.tn, noisy.conf())])),
-]
+local module = {
+    tn(inst) :: ah.TypeName("module", inst),
+    init(plugin, data=null) :: { plugin:plugin, data:data },
+};
+
+local fdph = {
+    tn: module.tn("source1"),
+    init: module.init("FakeDataProducerDAQModule"),
+    conf: {output:"queue1"},
+    start: {run:42},
+    stop: {},
+};
+
+local fdch = {
+    tn: module.tn("sink1"),
+    init: module.init("FakeDataConsumerDAQModule"),
+    conf: {input:"queue1"},
+    start: {run:42},
+    stop: {},
+};
+
+local handlers = [ noisy, queues, fdph, fdch ];
+
+local cn = ccm.commands.n;
+local commands = [cn.init, cn.conf, cn.start, cn.stop, cn.scrap, cn.fina];
+
+[ ch.Command(cname,
+             ah.Addressed([ah.AddrDat(h.tn, h[cname])
+                           for h in handlers if std.objectHas(h, cname)]))
+  for cname in commands ]
+

@@ -51,6 +51,7 @@ struct QueueCH : public CommandHandler {
             }
             qc.capacity = qi.capacity;
             qrcfg[qname] = qc;
+            ERS_INFO("Queue command handler: " << qname);
         }
         ERS_INFO("Queue command handler initialize queue registry");
         QueueRegistry::get().configure(qrcfg);
