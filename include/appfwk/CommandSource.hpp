@@ -18,10 +18,6 @@ namespace dunedaq::appfwk {
      * An subclass shall override recv() to provide the next command
      * and may override send() to accept a reply object from the
      * application.  Callers shall expect either or both may block.
-     *
-     * Subclasses must have call to CPP macro:
-     *
-     *     DEFINE_DUNE_DAQ_COMMANDSOURCE(dunedaq::appfwk::MyCmdSrc)
      */
     class CommandSource {
       public:
@@ -41,6 +37,16 @@ namespace dunedaq::appfwk {
     /** @brief Load a CommandSource plugin and return instance for URI.
      */
     std::shared_ptr<CommandSource> makeCommandSource(std::string const& uri);
+
+    /*
+     * Implementations add function like:
+     *
+     * extern "C" {
+     *    std::shared_ptr<dunedaq::appfwk::CommandSource> make(std::string inst) { 
+     *        return std::shared_ptr<dunedaq::appfwk::CommandSource>(new MySource(URI));
+     *    }
+     * }
+     */
 
 } // namespace dunedaq::appfwk
 

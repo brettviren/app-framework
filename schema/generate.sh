@@ -34,6 +34,7 @@ do_one () {
     local pre="$1"; shift
     local one="$1"; shift
     local dest="$1"; shift
+    local ext="$1"; shift
     if [ ! -f $one ] ; then
         echo "no such file: $one" 1>&1
         return
@@ -41,15 +42,16 @@ do_one () {
     for tname in $@
     do
         lname=$(echo $tname | awk '{print tolower($0)}')
-        local hppj2="${schemadir}/${lname}.hpp.j2"
-        local out="${dest}/${pre}${tname}.hpp"
+        local j2="${schemadir}/${lname}.${ext}.j2"
+        local out="${dest}/${pre}${tname}.${ext}"
         rm -f "$out"
-        render "$one" "$hppj2" "$out"
+        render "$one" "$j2" "$out"
         chmod -w "$out"
     done
 }
 
-do_one Cmd "${schemadir}/cmd-codegen.jsonnet" "$incdir" Nljs Structs
-do_one App "${schemadir}/app-codegen.jsonnet" "$incdir" Nljs Structs FSM
-do_one Dqm "${schemadir}/dqm-codegen.jsonnet" "$incdir" Nljs Structs
-do_one Test "${tstdir}/test-codegen.jsonnet" "$tstdir" Nljs Structs
+do_one Cmd "${schemadir}/cmd-codegen.jsonnet" "$incdir" hpp Nljs Structs
+do_one App "${schemadir}/app-codegen.jsonnet" "$incdir" hpp Nljs Structs
+do_one App "${schemadir}/app-codegen.jsonnet" "$srcdir" cpp CCFSM
+do_one Dqm "${schemadir}/dqm-codegen.jsonnet" "$incdir" hpp Nljs Structs
+do_one Test "${tstdir}/test-codegen.jsonnet" "$tstdir" hpp Nljs Structs

@@ -76,6 +76,15 @@ namespace dunedaq {
                       "Unexpected command: " << cmd << " received by " << who,
                       ((std::string)cmd)
                       ((std::string)who))
+
+    ERS_DECLARE_ISSUE(appfwk, CommandContractViolation,
+                      "Contract " << who
+                      << " violation with command: "
+                      << cmd << ": " << what,
+                      ((std::string)what)
+                      ((std::string)cmd)
+                      ((std::string)who))
+
 }
 
 

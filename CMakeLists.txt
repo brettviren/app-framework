@@ -19,7 +19,7 @@ set(APPFWK_DEPENDENCIES ${CETLIB} ${CETLIB_EXCEPT} ers::ers Folly::folly nlohman
 daq_point_build_to( src )
 
 add_library(appfwk SHARED src/QueueRegistry.cpp src/DAQProcess.cpp src/DAQModule.cpp
-  src/Application.cpp src/CommandHandler.cpp src/CommandSource.cpp src/NoisyCommandHandler.cpp)
+                          src/CommandDispatch.cpp src/CommandFactories.cpp)
 target_link_libraries(appfwk ${APPFWK_DEPENDENCIES})
 target_include_directories(appfwk PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}> )
 
@@ -48,6 +48,8 @@ add_library(appfwk_queueCommandHandler_duneCommandHandler src/QueueCommandHandle
 target_link_libraries(appfwk_queueCommandHandler_duneCommandHandler appfwk)
 add_library(appfwk_moduleCommandHandler_duneCommandHandler src/ModuleCommandHandler.cpp)
 target_link_libraries(appfwk_moduleCommandHandler_duneCommandHandler appfwk)
+add_library(appfwk_rcCommandContract_duneCommandContract src/AppCCFSM.cpp)
+target_link_libraries(appfwk_rcCommandContract_duneCommandContract appfwk)
 
 
 ##############################################################################
