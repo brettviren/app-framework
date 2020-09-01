@@ -8,6 +8,7 @@
 
 #include "appfwk/FanOutDAQModule.hpp"
 #include "appfwk/QueueRegistry.hpp"
+#include "appfwk/CmdStructs.hpp"
 
 #define BOOST_TEST_MODULE FanOutDAQModule_test // NOLINT
 
@@ -19,7 +20,6 @@
 
 constexpr auto queue_timeout = std::chrono::milliseconds(10);
 using namespace dunedaq::appfwk;
-namespace cmd = dunedaq::appfwk::cmd;
 
 BOOST_AUTO_TEST_SUITE(FanOutDAQModule_test)
 
@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE(Configure)
   dunedaq::appfwk::FanOutDAQModule<dunedaq::appfwk::NonCopyableType> foum("configure_test");
 
   auto conf_data = R"({"input": "input", "fanout_mode": "round_robin", "outputs": []})"_json;
-  foum.execute_command(cmd::IdNames::conf, conf_data);
+  foum.execute_command(CMD_FQNS::IdNames::conf, conf_data);
 }
 
 BOOST_AUTO_TEST_CASE(InvalidConfigure)
@@ -69,7 +69,7 @@ BOOST_AUTO_TEST_CASE(InvalidConfigure)
       {"input", "input"},
       {"fanout_mode", "Round_robin"},
       {"outputs", nlohmann::json::array()}};
-  BOOST_REQUIRE_THROW(foum.execute_command(cmd::IdNames::conf, conf_data),
+  BOOST_REQUIRE_THROW(foum.execute_command(CMD_FQNS::IdNames::conf, conf_data),
                       dunedaq::appfwk::ConfigureFailed);
 }
 
@@ -93,8 +93,8 @@ BOOST_AUTO_TEST_CASE(NonCopyableTypeTest)
   // This test assumes RoundRobin mode. Once configurability is implemented,
   // we'll have to configure it appropriately.
   // no Init command for foum.
-  foum.execute_command(cmd::IdNames::conf, conf_data);
-  foum.execute_command(cmd::IdNames::start, start_data);
+  foum.execute_command(CMD_FQNS::IdNames::conf, conf_data);
+  foum.execute_command(CMD_FQNS::IdNames::start, start_data);
 
   DAQSink<NonCopyableType> inputbuf("input");
   DAQSource<NonCopyableType> outputbuf1("output1");
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(NonCopyableTypeTest)
   }
   auto after_sleep = std::chrono::steady_clock::now();
 
-  foum.execute_command(cmd::IdNames::stop, stop_data);
+  foum.execute_command(CMD_FQNS::IdNames::stop, stop_data);
   BOOST_TEST_MESSAGE(
     "It took " << std::chrono::duration_cast<std::chrono::milliseconds>(after_push - start_push).count()
                << " ms to push values onto the input queue");
@@ -139,7 +139,7 @@ BOOST_AUTO_TEST_CASE(NonCopyableTypeTest)
   }
   BOOST_REQUIRE_EQUAL(res.data, 2);
 
-  foum.execute_command(cmd::IdNames::scrap, scrap_data);
+  foum.execute_command(CMD_FQNS::IdNames::scrap, scrap_data);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
