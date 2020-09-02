@@ -12,6 +12,8 @@
 #include "appfwk/Queue.hpp"
 #include "appfwk/QueueRegistry.hpp"
 
+#include "appfwk/CmdStructs.hpp"
+
 #include "ers/Issue.h"
 #include <nlohmann/json.hpp>
 
@@ -74,6 +76,23 @@ public:
 	throw dunedaq::appfwk::InvalidConfiguration(ERS_HERE, mod.key());
       }
     }
+
+    // here we force-generate "init" and "conf" commands.  In a "real"
+    // command-driven app (eg ddnode), both are explicit commands.
+    using CMD_FQNS::IdNames;
+    for (auto& modit : config_["modules"].items()) {
+        auto ptr = user_module_map[modit.key()];
+        if (!ptr) { continue; }
+        if (!ptr->has_command(IdNames::init)) { continue; }
+        ptr->execute_command(IdNames::init, {});
+    }
+    for (auto& modit : config_["modules"].items()) {
+        auto ptr = user_module_map[modit.key()];
+        if (!ptr) { continue; }
+        if (!ptr->has_command(IdNames::conf)) { continue; }
+        ptr->execute_command(IdNames::conf, config_["modules"][modit.key()]);
+    }
+
 
     for (auto& command : config_["commands"].items()) {
       std::list<std::string> command_order;
